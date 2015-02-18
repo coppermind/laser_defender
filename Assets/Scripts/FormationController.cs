@@ -13,8 +13,10 @@ public class FormationController : MonoBehaviour {
 	
 	private int direction = 1;
 	private float screenRightEdge, screenLeftEdge;
+	private LevelManager levelManager;
 
 	void Start () {
+		levelManager = GameObject.FindObjectOfType<LevelManager>();
 		Camera camera = Camera.main;
 		float distance = transform.position.z - camera.transform.position.z;
 		
@@ -36,7 +38,8 @@ public class FormationController : MonoBehaviour {
 		transform.position += new Vector3(direction * speed * Time.deltaTime, 0 ,0);
 		
 		if (AllShipsAreDead()) {
-			SpawnUntilFull();
+			// SpawnUntilFull();
+			levelManager.LoadLevel("Win Screen");
 		}
 	}
 	
