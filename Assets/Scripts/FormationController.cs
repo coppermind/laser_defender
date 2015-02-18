@@ -8,15 +8,15 @@ public class FormationController : MonoBehaviour {
 	public float height = 5f;
 	public float speed = 1.5f;
 	public float padding = 0.5f;
-	public float spawnIntervalSeconds = 1f;
+	public float spawnIntervalSeconds = 0.5f;
 	public int shipCount = 0;
 	
 	private int direction = 1;
 	private float screenRightEdge, screenLeftEdge;
-	private LevelManager levelManager;
+	//private LevelManager levelManager;
 
 	void Start () {
-		levelManager = GameObject.FindObjectOfType<LevelManager>();
+		//levelManager = GameObject.FindObjectOfType<LevelManager>();
 		Camera camera = Camera.main;
 		float distance = transform.position.z - camera.transform.position.z;
 		
@@ -38,8 +38,7 @@ public class FormationController : MonoBehaviour {
 		transform.position += new Vector3(direction * speed * Time.deltaTime, 0 ,0);
 		
 		if (AllShipsAreDead()) {
-			// SpawnUntilFull();
-			levelManager.LoadLevel("Win Screen");
+			SpawnUntilFull();
 		}
 	}
 	
@@ -57,50 +56,38 @@ public class FormationController : MonoBehaviour {
 	
 	void SpawnUntilFull() {
 		Transform freePosition = NextFreePosition();
-		if (freePosition != null) {
-			GameObject enemy = Instantiate(enemyPrefab, new Vector3(10.64f, 8f, 0), Quaternion.identity) as GameObject;
-			enemy.transform.parent = freePosition;
-			enemy.transform.position = freePosition.position;
-			shipCount++;
-			
-			//Invoke ("SpawnUntilFull", spawnIntervalSeconds);
+		if (null != freePosition) {
+			SpawnEnemyShipAt(freePosition, freePosition.position);
+			Invoke ("SpawnUntilFull", spawnIntervalSeconds);
 		}
 	}
 	
 	Transform NextFreePosition() {
-		foreach (Transform squad in transform) {
-			if (squad.tag == "Squad") {
-				foreach (Transform spawnPoint in squad) {
-					if (0 >= spawnPoint.childCount) {
-						return transform;
-					}
-				}
+		foreach (Transform spawnPoint in transform) {
+			if (!(0 < spawnPoint.childCount)) {
+				return spawnPoint;
 			}
 		}
 		return null;
 	}
 	
 	void SpawnEnemies() {
-		foreach (Transform squad in transform) {
-			if (squad.tag == "Squad") {
-				foreach (Transform spawnPoint in squad) {
-					GameObject enemy = Instantiate(enemyPrefab, new Vector3(10.64f, 8f, 0), Quaternion.identity) as GameObject;
-					enemy.transform.parent = spawnPoint;
-					enemy.transform.position = spawnPoint.transform.position;
-					shipCount++;
-				}
-			}
+		foreach (Transform spawnPoint in transform) {
+			SpawnEnemyShipAt(spawnPoint, spawnPoint.transform.position);
 		}
 	}
 	
+	void SpawnEnemyShipAt(Transform parentElement, Vector3 shipPosition) {
+		GameObject enemy = Instantiate(enemyPrefab, new Vector3(10.64f, 8f, 0), Quaternion.identity) as GameObject;
+		enemy.transform.parent = parentElement;
+		enemy.transform.position = shipPosition;
+		shipCount++;
+	}
+	
 	bool AllShipsAreDead() {
-		foreach (Transform squad in transform) {
-			if (squad.tag == "Squad") {
-				foreach (Transform spawnPoint in squad) {
-					if (0 < spawnPoint.childCount) {
-						return false;
-					}
-				}
+		foreach (Transform spawnPoint in transform) {
+			if (0 < spawnPoint.childCount) {
+				return false;
 			}
 		}
 		return true;
