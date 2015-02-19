@@ -7,7 +7,7 @@ public class FormationController : MonoBehaviour {
 	public float width = 10f;
 	public float height = 5f;
 	public float speed = 1.5f;
-	public float padding = 0.5f;
+	public float padding = 0.2f;
 	public float spawnIntervalSeconds = 0.5f;
 	public int shipCount = 0;
 	
@@ -23,7 +23,7 @@ public class FormationController : MonoBehaviour {
 		screenLeftEdge = camera.ViewportToWorldPoint(new Vector3(0, 0, distance)).x + padding;
 		screenRightEdge = camera.ViewportToWorldPoint(new Vector3(1, 1, distance)).x - padding;
 	
-		SpawnEnemies();
+		SpawnUntilFull();
 	}
 	
 	void Update () {
@@ -63,18 +63,15 @@ public class FormationController : MonoBehaviour {
 	}
 	
 	Transform NextFreePosition() {
-		foreach (Transform spawnPoint in transform) {
-			if (!(0 < spawnPoint.childCount)) {
-				return spawnPoint;
+		Position[] spawnPoints = GetComponentsInChildren<Position>();
+		int points = spawnPoints.Length;
+		for (int i = 0; i < points; i++) {
+			int current = Random.Range(0, points-1);
+			if (0 == spawnPoints[current].transform.childCount) {
+				return spawnPoints[current].transform;
 			}
 		}
 		return null;
-	}
-	
-	void SpawnEnemies() {
-		foreach (Transform spawnPoint in transform) {
-			SpawnEnemyShipAt(spawnPoint, spawnPoint.transform.position);
-		}
 	}
 	
 	void SpawnEnemyShipAt(Transform parentElement, Vector3 shipPosition) {

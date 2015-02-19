@@ -13,6 +13,8 @@ public class Ship : MonoBehaviour {
 	public float hitPoints = 10f;
 	public int spawnCount = 3;
 	
+	public AudioClip laserSFX;
+	
 	private float minX, maxX, minY, maxY;
 	
 	private LevelManager levelManager;
@@ -67,22 +69,24 @@ public class Ship : MonoBehaviour {
 	void FireLaser() {
 		GameObject laser = Instantiate(laserPrefab, transform.position, Quaternion.identity) as GameObject;
 		laser.rigidbody2D.velocity = new Vector3(0f, laserSpeed, 0f);
+		AudioSource.PlayClipAtPoint(laserSFX, transform.position);
 	}
 	
 	void OnTriggerEnter2D(Collider2D collider) {
 		EnemyLaser enemyLaser = collider.gameObject.GetComponent<EnemyLaser>();
-		if (enemyLaser != null) {
+		Enemy enemyShip = collider.gameObject.GetComponent<Enemy>();
+		
+		if (enemyShip != null) {
+			// Auto lose if collision with enemy ship
+			Destroy(gameObject);
+			levelManager.LoadLevel("Lose Screen");
+		} else if (enemyLaser != null) {
 			hitPoints -= enemyLaser.damagePoints;
 			if (0 >= hitPoints) {
 				Destroy(gameObject);
-				spawnCount--;
-				
-//				if (0 < spawnCount) {
-//					GameObject laser = Instantiate(laserPrefab, transform.position, Quaternion.identity) as GameObject;
-//				} else {
-					levelManager.LoadLevel("Lose Screen");
-//				}
+				// spawnCount--;
+				levelManager.LoadLevel("Lose Screen");
 			}
-		}
+		} 
 	}
 }
