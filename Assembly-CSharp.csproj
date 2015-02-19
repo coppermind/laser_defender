@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\EnemyLaser.cs" />
+     <Compile Include="Assets\Scripts\FinalScore.cs" />
      <Compile Include="Assets\Scripts\FormationController.cs" />
      <Compile Include="Assets\Scripts\Laser.cs" />
      <Compile Include="Assets\Scripts\LevelManager.cs" />

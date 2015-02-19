@@ -4,7 +4,7 @@ using System.Collections;
 
 public class ScoreController : MonoBehaviour {
 
-	private int totalScore = 0;
+	public static int totalScore = 0;
 	private Text scoreText;
 
 	void Start() {
