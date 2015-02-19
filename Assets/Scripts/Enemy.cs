@@ -50,10 +50,6 @@ public class Enemy : MonoBehaviour {
 	
 	void CallDragon() {
 		puff = Instantiate(kaboomFX, transform.position, Quaternion.identity) as GameObject;
-		Invoke ("ShooDragon", 0.3f);
-	}
-	
-	void ShooDragon(GameObject puff) {
-		Destroy(puff);
+		Destroy(puff.gameObject, 1.0f);
 	}
 }
